@@ -1,25 +1,22 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
-import { FaRegUser } from "react-icons/fa6"; // Keep this import
+import { FaRegUser } from "react-icons/fa6";
 import axios from 'axios';
-import { toast } from 'react-toastify'; // Ensure you have this installed and configured
+import { toast } from 'react-toastify'; 
 
 export default function Login() {
     const [formsign, setFormsign] = useState('signin');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
-    // The token state is not strictly needed here since it's only used to set localStorage
-    // const [token, setToken] = useState(localStorage.getItem('token') || ''); 
-      
+  
     const saveToken = (newToken) => {
-        // setToken(newToken); // Removing this line as state tracking is redundant for this function
+       
         localStorage.setItem('token', newToken);
     }
 
     const handleFormSwitch = (formType) => {
         setFormsign(formType);
-        // Clear inputs on switch for a better user experience
         setEmail('');
         setPassword('');
         setName('');
@@ -34,7 +31,7 @@ export default function Login() {
             const { data } = await axios.post(`${API}/login`, { email, password });
             toast.success("Login successful");
             
-            // persist token and basic user info
+           
             if (data?.token) {
                 saveToken(data.token);
             }
@@ -42,7 +39,7 @@ export default function Login() {
                 localStorage.setItem('user', JSON.stringify(data.user));
             }
             
-            // Navigate only if login was successful and data exists
+            
             if (data) {
                 navigate("/Home");
             }
@@ -57,8 +54,7 @@ export default function Login() {
         try {
             await axios.post(`${API}/register`, { name, email, password });
             toast.success("Registration successful! Logging you in...");
-            
-            // Attempt auto-login after successful registration
+         
             try {
                 const loginRes = await axios.post(`${API}/login`, { email, password });
                 if (loginRes?.data?.token) {
