@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-
+import { FaUsers } from "react-icons/fa6";
 export default function Home() {
   const [templates, setTemplates] = useState([]) 
   const [responses, setResponses] = useState([])
@@ -26,7 +26,7 @@ export default function Home() {
       const headers = token ? { Authorization: `Bearer ${token}` } : {}
       
       if (currentUser?.role === 'ADMIN') {
-        // Admin sees templates and all responses
+        
         const [templatesRes, responsesRes] = await Promise.all([
           axios.get(`${API_URL}/api/feedback/templates`, { headers }),
           axios.get(`${API_URL}/api/feedback/responses`, { headers })
@@ -34,7 +34,7 @@ export default function Home() {
         setTemplates(templatesRes.data || [])
         setResponses(responsesRes.data || [])
       } else {
-        // Users see active templates
+        
         const templatesRes = await axios.get(`${API_URL}/api/feedback/active`, { headers })
         setTemplates(templatesRes.data || [])
       }
@@ -79,25 +79,35 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-6 px-4">
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 py-6 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-3xl font-bold text-slate-800">
-            {user?.role === 'ADMIN' ? 'Feedback Management' : 'Feedback Forms'}
-          </h2>
-          {user?.role === 'ADMIN' && (
-            <button 
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
-              onClick={() => navigate('/create-feedback')}
-            >
-              + Create Feedback Template
-            </button>
-          )}
+        <div className="mb-6 bg-slate-800/80 backdrop-blur-xl border border-purple-500/30 rounded-2xl shadow-2xl p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-pink-400 to-blue-400">
+              {user?.role === 'ADMIN' ? 'Feedback Management' : 'Feedback Forms'}
+            </h2>
+            {user?.role === 'ADMIN' && (
+              <div className="flex gap-3">
+                <button 
+                  className="px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-all transform hover:scale-105 shadow-lg font-medium"
+                  onClick={() => navigate('/user-management')}
+                >
+                   <FaUsers className="inline mr-2" /> Manage Users
+                </button>
+                <button 
+                  className="px-4 py-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg transition-all transform hover:scale-105 shadow-lg font-medium"
+                  onClick={() => navigate('/create-feedback')}
+                >
+                  + Create Feedback Template
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {loading ? (
           <div className="text-center py-12">
-            <p className="text-slate-600">Loading...</p>
+            <p className="text-purple-200 text-xl">Loading...</p>
           </div>
         ) : (
           <>
@@ -110,7 +120,6 @@ export default function Home() {
             ) : (
               <UserView 
                 templates={templates}
-                onSubmit={handleSubmitResponse}
               />
             )}
           </>
@@ -120,31 +129,35 @@ export default function Home() {
   )
 }
 
-// Admin View Component
+
 function AdminView({ templates, responses, onDelete }) {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-bold text-slate-700 mb-4">Feedback Templates ({templates.length})</h3>
+        <h3 className="text-2xl font-bold text-white mb-4">
+          Feedback Templates ({templates.length})
+        </h3>
         {templates.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-6 text-center text-slate-500">
-            No templates yet. Create your first feedback template!
+          <div className="bg-slate-800/60 backdrop-blur-xl border border-purple-500/30 rounded-xl shadow-lg p-8 text-center">
+            <p className="text-purple-200">No templates yet. Create your first feedback template!</p>
           </div>
         ) : (
           <div className="grid gap-4">
             {templates.map((template) => (
-              <div key={template.id} className="bg-white rounded-lg shadow p-6">
+              <div key={template.id} className="bg-slate-800/60 backdrop-blur-xl border border-purple-500/30 rounded-xl shadow-lg p-6 hover:bg-slate-800/80 transition-all">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <h4 className="text-lg font-bold text-slate-800">{template.title}</h4>
-                    <p className="text-slate-600 mt-2">{template.question}</p>
-                    <p className="text-sm text-slate-500 mt-3">
-                      Responses: {template._count?.responses || 0}
-                    </p>
+                    <h4 className="text-xl font-bold text-white">{template.title}</h4>
+                    <p className="text-purple-200 mt-2 whitespace-pre-wrap">{template.question}</p>
+                    <div className="mt-3 inline-block px-3 py-1 bg-purple-600/30 border border-purple-400/40 rounded-full">
+                      <p className="text-sm text-purple-200">
+                        Responses: {template._count?.responses || 0}
+                      </p>
+                    </div>
                   </div>
                   <button
                     onClick={() => onDelete(template.id)}
-                    className="ml-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                    className="ml-4 px-4 py-2 bg-linear-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-lg text-sm transition-all transform hover:scale-105 shadow-lg"
                   >
                     Delete
                   </button>
@@ -156,24 +169,36 @@ function AdminView({ templates, responses, onDelete }) {
       </div>
 
       <div>
-        <h3 className="text-xl font-bold text-slate-700 mb-4">User Responses ({responses.length})</h3>
+        <h3 className="text-2xl font-bold text-white mb-4">
+          User Responses ({responses.length})
+        </h3>
         {responses.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-6 text-center text-slate-500">
-            No responses yet
+          <div className="bg-slate-800/60 backdrop-blur-xl border border-purple-500/30 rounded-xl shadow-lg p-8 text-center">
+            <p className="text-purple-200">No responses yet</p>
           </div>
         ) : (
           <div className="grid gap-4">
             {responses.map((response) => (
-              <div key={response.id} className="bg-white rounded-lg shadow p-6">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-bold text-slate-800">{response.template?.title}</h4>
-                  <span className="text-yellow-500">{'⭐'.repeat(response.rating)}</span>
+              <div key={response.id} className="bg-slate-800/60 backdrop-blur-xl border border-purple-500/30 rounded-xl shadow-lg p-6 hover:bg-slate-800/80 transition-all">
+                <div className="flex justify-between items-start mb-3">
+                  <h4 className="font-bold text-xl text-white">{response.template?.title}</h4>
+                  <div className="flex items-center gap-1">
+                    <span className="text-yellow-400 text-lg">{'⭐'.repeat(response.rating)}</span>
+                    <span className="text-purple-200 text-sm ml-1">({response.rating}/5)</span>
+                  </div>
                 </div>
-                <p className="text-sm text-slate-600 mb-2">{response.template?.question}</p>
-                <p className="text-slate-800 bg-slate-50 p-3 rounded">{response.answer}</p>
-                <p className="text-xs text-slate-500 mt-2">
-                  By {response.user?.name || response.user?.email} • {new Date(response.createdAt).toLocaleDateString()}
-                </p>
+                <p className="text-sm text-purple-200 mb-3 italic whitespace-pre-wrap">{response.template?.question}</p>
+                <div className="bg-slate-700/40 border border-purple-400/20 rounded-lg p-4">
+                  <p className="text-white whitespace-pre-wrap">{response.answer}</p>
+                </div>
+                <div className="mt-3 flex items-center gap-3">
+                  <span className="px-3 py-1 bg-purple-600/30 border border-purple-400/40 rounded-full text-sm text-purple-200">
+                    👤 {response.user?.name || response.user?.email}
+                  </span>
+                  <span className="text-xs text-purple-300">
+                    📅 {new Date(response.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
@@ -183,73 +208,58 @@ function AdminView({ templates, responses, onDelete }) {
   )
 }
 
-// User View Component
-function UserView({ templates, onSubmit }) {
-  const [answers, setAnswers] = useState({})
-  const [ratings, setRatings] = useState({})
 
-  const handleSubmit = (templateId) => {
-    const answer = answers[templateId]
-    const rating = ratings[templateId] || 5
-    
-    if (!answer?.trim()) {
-      toast.error('Please provide an answer')
-      return
-    }
-
-    onSubmit(templateId, answer, rating)
-    setAnswers(prev => ({ ...prev, [templateId]: '' }))
-    setRatings(prev => ({ ...prev, [templateId]: 5 }))
-  }
+function UserView({ templates }) {
+  const navigate = useNavigate()
 
   return (
     <div>
       {templates.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-12 text-center">
-          <p className="text-slate-600 mb-2">No feedback forms available yet</p>
-          <p className="text-sm text-slate-500">Check back later!</p>
+        <div className="bg-slate-800/60 backdrop-blur-xl border border-purple-500/30 rounded-xl shadow-lg p-12 text-center">
+          <p className="text-purple-200 text-lg mb-2">No feedback forms available yet</p>
+          <p className="text-sm text-purple-300">Check back later!</p>
         </div>
       ) : (
-        <div className="grid gap-6">
-          {templates.map((template) => (
-            <div key={template.id} className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-2xl font-bold text-blue-600 mb-3">{template.title}</h3>
-              <p className="text-slate-700 mb-4 text-lg">{template.question}</p>
-              
-              <textarea
-                value={answers[template.id] || ''}
-                onChange={(e) => setAnswers(prev => ({ ...prev, [template.id]: e.target.value }))}
-                className="w-full px-4 py-3 border border-slate-900 rounded-md focus:outline-none focus:border-blue-600 mb-4"
-                rows="4"
-                placeholder="Type your answer here..."
-              ></textarea>
-              
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Rating: {ratings[template.id] || 5} / 5
-                </label>
-                <input
-                  type="range"
-                  min="1"
-                  max="5"
-                  value={ratings[template.id] || 5}
-                  onChange={(e) => setRatings(prev => ({ ...prev, [template.id]: parseInt(e.target.value) }))}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-slate-500 mt-1">
-                  <span>1 - Poor</span>
-                  <span>5 - Excellent</span>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {templates.map((template) => {
+            const questions = template.question.split('\n\n').filter(q => q.trim())
+            
+            return (
+              <div 
+                key={template.id} 
+                className="bg-slate-800/60 backdrop-blur-xl border border-purple-500/30 rounded-xl shadow-lg p-6 hover:bg-slate-800/80 hover:border-purple-400/50 transition-all cursor-pointer group transform hover:scale-[1.02]"
+                onClick={() => navigate(`/feedback/${template.id}`)}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-pink-400 to-blue-400">
+                    {template.title}
+                  </h3>
+                  <div className="px-3 py-1 bg-purple-600/30 border border-purple-400/40 rounded-full text-xs text-purple-200 whitespace-nowrap">
+                    {questions.length} {questions.length === 1 ? 'Question' : 'Questions'}
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <p className="text-purple-200 text-sm line-clamp-3">
+                    {questions[0]}
+                    {questions.length > 1 && <span className="text-purple-300 ml-1">...</span>}
+                  </p>
+                </div>
+                
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-purple-500/20">
+                  <span className="text-purple-300 text-sm font-medium">Click to fill out</span>
+                  <svg 
+                    className="w-5 h-5 text-purple-400 group-hover:translate-x-1 transition-transform" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               </div>
-              
-              <button
-                onClick={() => handleSubmit(template.id)}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 font-medium"
-              >
-                Submit Feedback
-              </button>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
