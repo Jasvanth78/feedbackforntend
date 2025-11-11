@@ -10,6 +10,7 @@ export default function CreateFeedbackTemplate() {
   })
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const API_URL = import.meta.env.VITE_BASE_URL
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -31,7 +32,7 @@ export default function CreateFeedbackTemplate() {
     try {
       const token = localStorage.getItem('token')
       const response = await axios.post(
-        'http://localhost:3000/api/feedback/templates',
+        `${API_URL}/api/feedback/templates`,
         formData,
         {
           headers: {

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 export default function ForgotPassword(){
   const [email, setEmail] = useState('')
   const navigate = useNavigate()
-  const API = 'http://localhost:3000/api'
+  const API = `${import.meta.env.VITE_BASE_URL}/api`
 
   const handleSubmit = async (e) => {
     e.preventDefault()

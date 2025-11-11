@@ -10,7 +10,7 @@ export default function ResetPassword() {
   const token = searchParams.get('token');
   const id = searchParams.get('id');
   const [password, setPassword] = useState('');
-  const API = 'http://localhost:3000/api';
+  const API = `${import.meta.env.VITE_BASE_URL}/api`;
 
   const submit = async (e) => {
     e.preventDefault();

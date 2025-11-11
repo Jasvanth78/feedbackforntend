@@ -11,6 +11,7 @@ export default function Home() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const API_URL = import.meta.env.VITE_BASE_URL
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user') || 'null')
@@ -27,14 +28,14 @@ export default function Home() {
       if (currentUser?.role === 'ADMIN') {
         // Admin sees templates and all responses
         const [templatesRes, responsesRes] = await Promise.all([
-          axios.get('http://localhost:3000/api/feedback/templates', { headers }),
-          axios.get('http://localhost:3000/api/feedback/responses', { headers })
+          axios.get(`${API_URL}/api/feedback/templates`, { headers }),
+          axios.get(`${API_URL}/api/feedback/responses`, { headers })
         ])
         setTemplates(templatesRes.data || [])
         setResponses(responsesRes.data || [])
       } else {
         // Users see active templates
-        const templatesRes = await axios.get('http://localhost:3000/api/feedback/active', { headers })
+        const templatesRes = await axios.get(`${API_URL}/api/feedback/active`, { headers })
         setTemplates(templatesRes.data || [])
       }
     } catch (err) {
@@ -48,7 +49,7 @@ export default function Home() {
     try {
       const token = localStorage.getItem('token')
       await axios.post(
-        'http://localhost:3000/api/feedback/submit',
+        `${API_URL}/api/feedback/submit`,
         { templateId, answer, rating },
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -67,7 +68,7 @@ export default function Home() {
     
     try {
       const token = localStorage.getItem('token')
-      await axios.delete(`http://localhost:3000/api/feedback/templates/${id}`, {
+      await axios.delete(`${API_URL}/api/feedback/templates/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       toast.success('Template deleted')

@@ -22,7 +22,7 @@ export default function Login() {
         setName('');
     }
 
-    const API = 'http://localhost:3000/api';
+    const API = `${import.meta.env.VITE_BASE_URL}/api`;
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
