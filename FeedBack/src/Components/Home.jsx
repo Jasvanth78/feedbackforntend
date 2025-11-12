@@ -215,7 +215,7 @@ function UserView({ templates }) {
   return (
     <div>
       {templates.length === 0 ? (
-        <div className="bg-slate-800/60 backdrop-blur-xl border border-purple-500/30 rounded-xl shadow-lg p-12 text-center">
+        <div className="bg-slate-800/60 backdrop-blur-xl border border-purple-300/30 rounded-xl shadow-lg p-12 text-center">
           <p className="text-purple-200 text-lg mb-2">No feedback forms available yet</p>
           <p className="text-sm text-purple-300">Check back later!</p>
         </div>
