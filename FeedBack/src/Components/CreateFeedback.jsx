@@ -64,21 +64,17 @@ export default function CreateFeedbackTemplate() {
     try {
       const token = localStorage.getItem('token')
       
-      // Create a template with questions joined or send as array
+      // Send questions as an array to the backend (it accepts both formats)
       const templateData = {
         title: formData.title,
-        question: filledQuestions.join('\n\n') // Join questions with line breaks
+        questions: filledQuestions
       }
 
-      const response = await axios.post(
-        `${API_URL}/api/feedback/templates`,
-        templateData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+      const response = await axios.post(`${API_URL}/api/feedback/templates`, templateData, {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
-      )
+      })
       
       toast.success('Feedback template created successfully!')
       navigate('/Home')
