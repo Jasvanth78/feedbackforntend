@@ -25,8 +25,13 @@ export default function Login() {
     const API = `${import.meta.env.VITE_BASE_URL}/api`;
     const navigate = useNavigate();
 
+    // Debug logging
+    console.log('Environment VITE_BASE_URL:', import.meta.env.VITE_BASE_URL);
+    console.log('API URL:', API);
+
     const handleLogin = async (e) => {
         e.preventDefault();
+        console.log('Attempting login to:', `${API}/login`);
         try {
             const { data } = await axios.post(`${API}/login`, { email, password });
             toast.success("Login successful");
